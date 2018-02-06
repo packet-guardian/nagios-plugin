@@ -1,0 +1,26 @@
+#! /usr/bin/env python3
+
+import argparse
+import requests
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-H", help="Packet Guardian address", required=True)
+    parser.add_argument("--user", help="Status username")
+    parser.add_argument("--pwd", help="Status password")
+    args = parser.parse_args()
+
+    try:
+        r = requests.get('%s/api/status' % args.H, auth=(args.user, args.pwd))
+        rJSON = r.json()
+    except Exception as e:
+        print('PACKET GUARDIAN ERROR: %s' % e)
+        exit(2)
+
+    print('PACKET GUARDIAN %s' % rJSON['Data']['database_status'].upper())
+
+    if rJSON['Data']['database_status'] != 'ok':
+        exit(2)
+
+if __name__ == "__main__":
+    main()
